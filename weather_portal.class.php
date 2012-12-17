@@ -83,7 +83,7 @@ class weather_portal extends portal_generic {
 	}
 
 	public function output() {
-		if($this->user->data['user_id'] > 0 || ($this->user_data['country'] = '' || $this->user_data['ZIP_code'] == 0)){
+		if($this->user->data['user_id'] > 0 &&($this->user->data['country'] != '' && $this->user->data['ZIP_code'] != 0)){
 			$this->user_data		= $this->pdh->get('user', 'data', array($this->user->data['user_id']));
 			$seconds_to_midnight	= ($this->config->get('pk_weather_hours')) ? $this->config->get('pk_weather_hours')*3600 : 6*3600;
 			$tempformat				= ($this->config->get('pk_weather_tempformat') == 'F') ? '°F' : '°C';
