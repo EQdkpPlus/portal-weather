@@ -29,7 +29,7 @@ class weather_portal extends portal_generic {
 	protected $path		= 'weather';
 	protected $data		= array(
 		'name'			=> 'Weather',
-		'version'		=> '2.0.0',
+		'version'		=> '2.0.1',
 		'author'		=> 'WalleniuM',
 		'contact'		=> EQDKP_PROJECT_URL,
 		'description'	=> 'Shows the weather and a 2 days forcast',
@@ -46,7 +46,7 @@ class weather_portal extends portal_generic {
 			'name'		=> 'pk_weather_tempformat',
 			'language'	=> 'pk_weather_tempformat',
 			'property'	=> 'dropdown',
-			'options'	=> array('C','F'),
+			'options'	=> array('C' => 'C','F' => 'F'),
 		),
 	);
 	protected $install	= array(
@@ -181,7 +181,7 @@ class weather_portal extends portal_generic {
 					<div class="weatherTemp">'.$weather_data['condition']['temp'].'°'.$weather_data['units']['temperature'].'</div>
 					<div class="weatherDesc">'.(($this->user->lang(array('pk_weather_condition', $weather_data['condition']['code']))) ? $this->user->lang(array('pk_weather_condition', $weather_data['condition']['code'])) : $weather_data['condition']['text']).'</div>
 					<div class="weatherRange">'.$this->user->lang('pk_weather_high').': '.$weather_data['forecast'][0]['high'].'°'.$weather_data['units']['temperature'].' '.$this->user->lang('pk_weather_low').': '.$weather_data['forecast'][0]['low'].'°'.$weather_data['units']['temperature'].'</div>
-					<div class="weatherWind">'.$this->user->lang('pk_weather_wind_txt').': '.(($this->user->lang(array('pk_weather_wind', $weather_data['wind']['direction']))) ? $this->user->lang(array('pk_weather_wind', $weather_data['wind']['direction'])) : $weather_data['wind']['direction']).' '.$weather_data['wind']['speed'].$weather_data['units']['speed'].'</div>
+					<div class="weatherWind">'.$this->user->lang('pk_weather_wind_txt').': '.(($this->user->lang(array('pk_weather_wind', $this->windrose($weather_data['wind']['direction'])))) ? $this->user->lang(array('pk_weather_wind', $this->windrose($weather_data['wind']['direction']))) : $this->windrose($weather_data['wind']['direction'])).' '.$weather_data['wind']['speed'].$weather_data['units']['speed'].'</div>
 					<div class="weatherLink"><a href="'.$weather_data['link'].'" target="_self" title="'.$this->user->lang('pk_weather_fulllink').'">'.$this->user->lang('pk_weather_fulllink').'</a></div>
 				</div>';
 
@@ -189,7 +189,7 @@ class weather_portal extends portal_generic {
 		}else{
 			$this->tpl->add_js('
 			var APPID = ""; // Your Yahoo Application ID
-			var DEG = "c";  // c for celsius, f for fahrenheit
+			var DEG = "'.(($this->config->get('pk_weather_tempformat') == 'F') ? 'f' : 'c').'";  // c for celsius, f for fahrenheit
 
 			// Does this browser support geolocation?
 			if (navigator.geolocation) {
@@ -213,6 +213,7 @@ class weather_portal extends portal_generic {
 					var wsql = 'select * from weather.forecast where woeid=WID and u=\"'+DEG+'\"',
 						weatherYQL = 'http://query.yahooapis.com/v1/public/yql?q='+encodeURIComponent(wsql)+'&format=json&callback=?',
 						code, city, results, woeid;
+					console.log(wsql);
 
 					// Issue a cross-domain AJAX request (CORS) to the GEO service.
 					// Not supported in Opera and IE.
@@ -229,7 +230,7 @@ class weather_portal extends portal_generic {
 
 							// Make a weather API request (it is JSONP, so CORS is not an issue):
 							$.getJSON(weatherYQL.replace('WID',woeid), function(r){
-
+								console.log(r);
 								if(r.query.count == 1){
 
 									$.post('".$this->root_path."portal/weather/weather_geolocation.php".$this->SID."&link_hash=".$this->user->csrfGetToken('module_weather_geoloc')."', r, function(data) {
@@ -330,7 +331,7 @@ class weather_portal extends portal_generic {
 								<div class="weatherTemp">'.$weather_data['condition']['temp'].'°'.$weather_data['units']['temperature'].'</div>
 								<div class="weatherDesc">'.(($this->user->lang(array('pk_weather_condition', $weather_data['condition']['code']))) ? $this->user->lang(array('pk_weather_condition', $weather_data['condition']['code'])) : $weather_data['condition']['text']).'</div>
 								<div class="weatherRange">'.$this->user->lang('pk_weather_high').': '.$weather_data['forecast'][0]['high'].'°'.$weather_data['units']['temperature'].' '.$this->user->lang('pk_weather_low').': '.$weather_data['forecast'][0]['low'].'°'.$weather_data['units']['temperature'].'</div>
-								<div class="weatherWind">'.$this->user->lang('pk_weather_wind_txt').': '.(($this->user->lang(array('pk_weather_wind', $weather_data['wind']['direction']))) ? $this->user->lang(array('pk_weather_wind', $weather_data['wind']['direction'])) : $weather_data['wind']['direction']).' '.$weather_data['wind']['speed'].$weather_data['units']['speed'].'</div>
+								<div class="weatherWind">'.$this->user->lang('pk_weather_wind_txt').': '.(($this->user->lang(array('pk_weather_wind', $this->windrose($weather_data['wind']['direction'])))) ? $this->user->lang(array('pk_weather_wind', $this->windrose($weather_data['wind']['direction']))) : $this->windrose($weather_data['wind']['direction'])).' '.$weather_data['wind']['speed'].$weather_data['units']['speed'].'</div>
 								<div class="weatherLink"><a href="'.$weather_data['link'].'" target="_self" title="'.$this->user->lang('pk_weather_fulllink').'">'.$this->user->lang('pk_weather_fulllink').'</a></div>
 							</div>';
 				return $myOut;
@@ -338,6 +339,18 @@ class weather_portal extends portal_generic {
 		} else {
 			return "access denied";
 		}
+	}
+	
+	private function windrose($degree){
+		if ($degree > 337.5 && $degree < 22.5) return 'N';
+		elseif($degree > 22.5 && $degree < 67.5) return 'NE';
+		elseif($degree > 67.5 && $degree < 112.5) return 'E';
+		elseif($degree > 112.5 && $degree < 157.5) return 'SE';
+		elseif($degree > 157.5 && $degree < 202.5) return 'S';
+		elseif($degree > 202.5 && $degree < 247.5) return 'SW';
+		elseif($degree > 247.5 && $degree < 292.5) return 'W';
+		elseif($degree > 292.5 && $degree < 337.5) return 'NW';
+		return $degree;
 	}
 	
 }
