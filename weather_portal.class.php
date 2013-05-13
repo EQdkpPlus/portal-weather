@@ -58,46 +58,24 @@ class weather_portal extends portal_generic {
 		$this->tpl->js_file($this->root_path.'portal/weather/js/jquery.simpleopenweather.js');
 		
 		$this->tpl->add_css("
-			.weatherFeed {
-				font-family: Arial, Helvetica, sans-serif;
-				font-size: 90%;
-				margin: 2em 3em;
-				width: 280px;
-			}
-			.weatherFeed a { color: #888; }
-			.weatherFeed a:hover {
-				color: #000;
-				text-decoration: none;
-			}
 			.weatherItem {
 				padding: 0.8em;
 				text-align: right;
 			}
-			.weatherCity { text-transform: uppercase; }
+			.weatherCity { text-transform: uppercase; font-size: 0.8em; }
 			.weatherTemp {
-				font-size: 2.8em;
+				font-size: 2.0em;
 				font-weight: bold;
 			}
-			.weatherDesc, .weatherCity, .weatherForecastDay  { font-weight: bold; }
+			.weatherDesc, .weatherCity  { font-weight: bold; }
 			.weatherDesc { margin-bottom: 0.4em; }
-			.weatherRange, .weatherWind, .weatherLink, .weatherForecastItem { font-size: 0.8em; }
-			.weatherLink, .weatherForecastItem {
-				margin-top: 0.5em;
-				text-align: left;
-			}
-			.weatherForecastItem {
-				padding: 0.5em 0.5em 0.5em 80px;
-				background-color: #fff;
-				background-position: left center;
-			}
-			.weatherForecastDay { font-size: 1.1em; }
 		");
 		
 		$tempformat				= ($this->config->get('pk_weather_tempformat') == 'F') ? '°F' : '°C';
 		$tempformat_js			= ($this->config->get('pk_weather_tempformat') == 'F') ? ',units: "fahrenheit"' : '';
 		
 		if($this->user->data['user_id'] > 0 &&($this->user->data['country'] != '' && $this->user->data['town'] != '')){
-			$this->tpl->add_js('$("#weather").simpleopenweather({template: \'<div style="display: block;" class="toggle_container"><div style="white-space:normal;">	<div class="weatherItem" style="background-image:url({{icon}}); background-repeat: no-repeat;"><div class="weatherCity">{{place}}</div><div class="weatherTemp">{{temperature}} '.$tempformat.'</div><div class="weatherDesc">{{sky}}</div><div class="weatherLink"><a href="{{url}}" target="_self" title="Volle Vorhersage">'.$this->user->lang('pk_weather_fulllink').'</a></div></div>\', lang:"'.$this->user->lang('XML_LANG').'"'.$tempformat_js.'});', "docready");
+			$this->tpl->add_js('$("#weather").simpleopenweather({template: \'<div style="display: block;" class="toggle_container"><div style="white-space:normal;">	<div class="weatherItem" style="background-image:url({{icon}}); background-repeat: no-repeat;"><div class="weatherCity">{{place}}</div><div class="weatherTemp">{{temperature}} '.$tempformat.'</div><div class="weatherDesc">{{sky}}</div></div>\', lang:"'.$this->user->lang('XML_LANG').'"'.$tempformat_js.'});', "docready");
 			return '<div id="weather" class="simpleopenweather" data-simpleopenweather-city="'.$this->user->data['town'].', '.$this->user->data['country'].'"></div>';
 		}elseif($this->config->get('pk_weather_geolocation') == '1'){
 			$this->tpl->add_js('
@@ -108,7 +86,7 @@ class weather_portal extends portal_generic {
 				}
 		
 				function locationSuccess(position) {
-					$("#weather").simpleopenweather({latitude: position.coords.latitude, longitude: position.coords.longitude,template: \'<div style="display: block;" class="toggle_container"><div style="white-space:normal;">	<div class="weatherItem" style="background-image:url({{icon}}); background-repeat: no-repeat;"><div class="weatherCity">{{place}}</div><div class="weatherTemp">{{temperature}} '.$tempformat.'</div><div class="weatherDesc">{{sky}}</div><div class="weatherLink"><a href="{{url}}" target="_self" title="Volle Vorhersage">'.$this->user->lang('pk_weather_fulllink').'</a></div></div>\', lang:"'.$this->user->lang('XML_LANG').'"'.$tempformat_js.'});
+					$("#weather").simpleopenweather({latitude: position.coords.latitude, longitude: position.coords.longitude,template: \'<div style="display: block;" class="toggle_container"><div style="white-space:normal;">	<div class="weatherItem" style="background-image:url({{icon}}); background-repeat: no-repeat;"><div class="weatherCity">{{place}}</div><div class="weatherTemp">{{temperature}} '.$tempformat.'</div><div class="weatherDesc">{{sky}}</div></div>\', lang:"'.$this->user->lang('XML_LANG').'"'.$tempformat_js.'});
 				}
 
 				function locationError(error){

@@ -39,12 +39,11 @@
 						return;
 					}
 					temperature = (settings.units == "celsius") ? (weather.main.temp - 273.15) : (weather.main.temp - 241.15);
-					var info = {temp : temperature.toFixed(2),
+					var info = {temp : temperature.toFixed(1),
 								humidity :weather.main.humidity,
 								cloudiness: "N/A ",
 								sky: weather.weather[0].description,
 								icon: "http://openweathermap.org/img/w/"+weather.weather[0].icon+".png",
-								url: weather.main.url,
 								place : weather.name};
 
 					if(weather.clouds){
@@ -56,7 +55,6 @@
 											 	.replace(/{{humidity}}/ig, info.humidity)
 											 	.replace(/{{cloudiness}}/ig, info.cloudiness)
 												.replace(/{{icon}}/ig, info.icon)
-												.replace(/{{url}}/ig, info.url)
 											 	.replace(/{{sky}}/ig, info.sky));
 				},
 				error : function(){
