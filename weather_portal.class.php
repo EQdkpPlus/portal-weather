@@ -61,14 +61,22 @@ class weather_portal extends portal_generic {
 			.weatherItem {
 				padding: 0.8em;
 				text-align: right;
+				background-size:70px;
 			}
-			.weatherCity { text-transform: uppercase; font-size: 0.8em; }
+			.weatherCity {
+				text-transform: uppercase;
+				font-size: 0.8em;
+			}
 			.weatherTemp {
 				font-size: 2.0em;
 				font-weight: bold;
 			}
-			.weatherDesc, .weatherCity  { font-weight: bold; }
-			.weatherDesc { margin-bottom: 0.4em; }
+			.weatherDesc, .weatherCity  {
+				font-weight: bold;
+			}
+			.weatherDesc {
+				margin-bottom: 0.4em;
+			}
 		");
 		
 		$tempformat				= ($this->config->get('pk_weather_tempformat') == 'F') ? '°F' : '°C';
