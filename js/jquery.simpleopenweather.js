@@ -27,7 +27,6 @@
 			if(settings.lang != ''){
 				openweathermap_url += "&lang="+settings.lang;
 			}
-			console.log(openweathermap_url);
 
 			$.ajax({
 				type: "GET",
