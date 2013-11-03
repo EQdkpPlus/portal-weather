@@ -31,6 +31,7 @@ class weather_portal extends portal_generic {
 		'name'			=> 'Weather',
 		'version'		=> '3.0.0',
 		'author'		=> 'WalleniuM',
+		'icon'			=> 'fa-cloud',
 		'contact'		=> EQDKP_PROJECT_URL,
 		'description'	=> 'Shows the weather',
 	);
