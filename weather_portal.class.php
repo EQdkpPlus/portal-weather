@@ -40,7 +40,7 @@ class weather_portal extends portal_generic {
 			'options'	=> array('C' => 'C','F' => 'F'),
 		),
 		'geolocation'		=> array(
-			'type'		=> 'checkbox',
+			'type'		=> 'radio',
 		),
 	);
 	protected static $install	= array(

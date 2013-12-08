@@ -25,7 +25,7 @@ $lang = array(
 	'weather_desc'			=> 'Shows the weather',
 	'weather_name'			=> 'Weather',
 	'weather_no_data'		=> 'No Country or ZIP set in your user profile. Weather will only show information if you\'ve set up your Profile information.',
-	'weather_tempformat'	=> 'Temperature Format (default: Celcius)',
-	'weather_geolocation'	=> 'Use Geolocation-Option of the browser if no location data is setin the user profile?',
+	'weather_f_tempformat'	=> 'Temperature Format (default: Celcius)',
+	'weather_f_geolocation'	=> 'Use Geolocation-Option of the browser if no location data is setin the user profile?',
 );
 ?>
