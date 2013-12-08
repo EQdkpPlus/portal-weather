@@ -21,12 +21,11 @@ if ( !defined('EQDKP_INC') ){
 }
 
 $lang = array(
-	'weather'					=> 'Weather',
-	'weather_desc'				=> 'Shows the weather',
-	'weather_name'				=> 'Weather',
-	'pk_weather_no_data'		=> 'No Country or ZIP set in your user profile. Weather will only show information if you\'ve set up your Profile information.',
-	'pk_weather_tempformat'		=> 'Temperature Format (default: Celcius)',
-	'pk_weather_geolocation'	=> 'Use Geolocation-Option of the browser if no location data is setin the user profile?',
-	'pk_weather_fulllink'		=> 'Full forecast',
+	'weather'				=> 'Weather',
+	'weather_desc'			=> 'Shows the weather',
+	'weather_name'			=> 'Weather',
+	'weather_no_data'		=> 'No Country or ZIP set in your user profile. Weather will only show information if you\'ve set up your Profile information.',
+	'weather_tempformat'	=> 'Temperature Format (default: Celcius)',
+	'weather_geolocation'	=> 'Use Geolocation-Option of the browser if no location data is setin the user profile?',
 );
 ?>

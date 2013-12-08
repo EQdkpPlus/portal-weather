@@ -21,35 +21,29 @@ if ( !defined('EQDKP_INC') ){
 }
 
 class weather_portal extends portal_generic {
-	public static function __shortcuts() {
-		$shortcuts = array('user', 'pdh', 'pfh', 'core', 'db', 'tpl', 'config', 'puf'	=> 'urlfetcher', 'in');
-		return array_merge(parent::$shortcuts, $shortcuts);
-	}
-
-	protected $path		= 'weather';
-	protected $data		= array(
+	
+	public static $shortcuts = array('puf'	=> 'urlfetcher');
+	protected static $path		= 'weather';
+	protected static $data		= array(
 		'name'			=> 'Weather',
 		'version'		=> '3.0.0',
 		'author'		=> 'WalleniuM',
 		'icon'			=> 'fa-cloud',
 		'contact'		=> EQDKP_PROJECT_URL,
 		'description'	=> 'Shows the weather',
+		'lang_prefix'	=> 'weather_'
 	);
-	protected $positions = array('left1', 'left2', 'right');
+	protected static $positions = array('left1', 'left2', 'right');
 	protected $settings	= array(
-		'pk_weather_tempformat'		=> array(
-			'name'		=> 'pk_weather_tempformat',
-			'language'	=> 'pk_weather_tempformat',
-			'property'	=> 'dropdown',
+		'tempformat'	=> array(
+			'type'		=> 'dropdown',
 			'options'	=> array('C' => 'C','F' => 'F'),
 		),
-		'pk_weather_geolocation'		=> array(
-			'name'		=> 'pk_weather_geolocation',
-			'language'	=> 'pk_weather_geolocation',
-			'property'	=> 'checkbox',
+		'geolocation'		=> array(
+			'type'		=> 'checkbox',
 		),
 	);
-	protected $install	= array(
+	protected static $install	= array(
 		'autoenable'		=> '1',
 		'defaultposition'	=> 'left2',
 		'defaultnumber'		=> '11',
@@ -80,13 +74,13 @@ class weather_portal extends portal_generic {
 			}
 		");
 		
-		$tempformat				= ($this->config->get('pk_weather_tempformat') == 'F') ? '°F' : '°C';
-		$tempformat_js			= ($this->config->get('pk_weather_tempformat') == 'F') ? ',units: "fahrenheit"' : '';
+		$tempformat				= ($this->config('tempformat') == 'F') ? '°F' : '°C';
+		$tempformat_js			= ($this->config('tempformat') == 'F') ? ',units: "fahrenheit"' : '';
 		
 		if($this->user->data['user_id'] > 0 &&($this->user->data['country'] != '' && $this->user->data['town'] != '')){
 			$this->tpl->add_js('$("#weather").simpleopenweather({template: \'<div style="display: block;" class="toggle_container"><div style="white-space:normal;">	<div class="weatherItem" style="background-image:url({{icon}}); background-repeat: no-repeat;"><div class="weatherCity">{{place}}</div><div class="weatherTemp">{{temperature}} '.$tempformat.'</div><div class="weatherDesc">{{sky}}</div></div>\', lang:"'.$this->user->lang('XML_LANG').'"'.$tempformat_js.'});', "docready");
 			return '<div id="weather" class="simpleopenweather" data-simpleopenweather-city="'.$this->user->data['town'].', '.$this->user->data['country'].'"></div>';
-		}elseif($this->config->get('pk_weather_geolocation') == '1'){
+		}elseif($this->config('geolocation') == '1'){
 			$this->tpl->add_js('
 				if (navigator.geolocation) {
 					navigator.geolocation.getCurrentPosition(locationSuccess, locationError);
@@ -107,7 +101,7 @@ class weather_portal extends portal_generic {
 				}', "docready");
 			return '<div id="weather" class="simpleopenweather"></div>';
 		}else{
-			return $this->user->lang('pk_weather_no_data');
+			return $this->user->lang('weather_no_data');
 		}
 		
 	}
