@@ -48,6 +48,8 @@ class weather_portal extends portal_generic {
 		'defaultposition'	=> 'left2',
 		'defaultnumber'		=> '11',
 	);
+	
+	protected static $apiLevel = 20;
 
 	public function output() {
 		$this->tpl->js_file($this->root_path.'portal/weather/js/jquery.simpleopenweather.js');
