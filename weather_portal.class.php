@@ -109,7 +109,7 @@ class weather_portal extends portal_generic {
 			$strUserTown = $this->pdh->get('user', 'profilefield_by_name', array($this->user->id, 'location', true));
 			if ($strUserTown != "") $strTown = $strUserTown;
 		}
-		
+
 		//User has both in his profile
 		if($strUserCountry != "" && $strUserTown != ""){
 			$this->tpl->add_js('$("#weather_'.$this->id.'").simpleopenweather({template: \'<div style="display: block;" class="toggle_container"><div class="weatherCity"><i class="fa fa-map-marker fa-fw"></i> {{place}}</div><div class="weatherMiddle">{{icon}}<span class="weatherTemp">{{temperature}} '.$temperature_unit.'</span></div><div class="weatherDesc"><i class="fa fa-tag fa-fw"></i> {{sky}}</div><div class="weatherHumidity"><i class="fa fa-tint fa-fw"></i> {{humidity}} %</div><div class="weatherWind"><i class="fa fa-cloud"></i> {{wind.speed}} m/s, {{wind.direction}} °</div>\', lang:"'.$this->user->lang('XML_LANG').'", units: "'.$tempformat.'", iconfont: true});', "docready");
