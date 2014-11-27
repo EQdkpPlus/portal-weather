@@ -31,18 +31,11 @@ class weather_portal extends portal_generic {
 		'icon'			=> 'fa-cloud',
 		'contact'		=> EQDKP_PROJECT_URL,
 		'description'	=> 'Shows the weather',
-		'lang_prefix'	=> 'weather_'
+		'lang_prefix'	=> 'weather_',
+		'multiple'		=> true,
 	);
 	protected static $positions = array('left1', 'left2', 'right');
-	protected $settings	= array(
-		'tempformat'	=> array(
-			'type'		=> 'dropdown',
-			'options'	=> array('C' => 'C','F' => 'F'),
-		),
-		'geolocation'		=> array(
-			'type'		=> 'radio',
-		),
-	);
+	
 	protected static $install	= array(
 		'autoenable'		=> '1',
 		'defaultposition'	=> 'left2',
@@ -50,6 +43,27 @@ class weather_portal extends portal_generic {
 	);
 	
 	protected static $apiLevel = 20;
+	
+	public function get_settings($state){
+		$settings	= array(
+			'tempformat'	=> array(
+				'type'		=> 'dropdown',
+				'options'	=> array('C' => 'C','F' => 'F'),
+			),
+			'geolocation'	=> array(
+				'type'		=> 'radio',
+			),
+			'default_country' => array(
+				'type'		=> 'dropdown',
+				'options'	=> $this->pdh->get('user', 'country_list'),
+			),
+			'default_town' => array(
+				'type' => 'text',
+			),
+		);
+		
+		return $settings;
+	}
 
 	public function output() {
 		$this->tpl->js_file($this->root_path.'portal/weather/js/jquery.simpleopenweather.js');
@@ -83,11 +97,27 @@ class weather_portal extends portal_generic {
 		$temperature_unit		= ($this->config('tempformat') == 'F') ? '°F' : '°C';
 		$tempformat				= ($this->config('tempformat') == 'F') ? 'imperial' : 'metric';
 		
-		if($this->user->data['user_id'] > 0 &&($this->user->data['country'] != '' && $this->user->data['town'] != '')){
-			$this->tpl->add_js('$("#weather").simpleopenweather({template: \'<div style="display: block;" class="toggle_container"><div class="weatherCity"><i class="fa fa-map-marker fa-fw"></i> {{place}}</div><div class="weatherMiddle">{{icon}}<span class="weatherTemp">{{temperature}} '.$temperature_unit.'</span></div><div class="weatherDesc"><i class="fa fa-tag fa-fw"></i> {{sky}}</div><div class="weatherHumidity"><i class="fa fa-tint fa-fw"></i> {{humidity}} %</div><div class="weatherWind"><i class="fa fa-cloud"></i> {{wind.speed}} m/s, {{wind.direction}} °</div>\', lang:"'.$this->user->lang('XML_LANG').'", units: "'.$tempformat.'", iconfont: true});', "docready");
-			return '<div id="weather" class="simpleopenweather" data-simpleopenweather-city="'.$this->user->data['town'].', '.$this->user->data['country'].'"></div>';
-		}elseif($this->config('geolocation') == '1'){
-			$this->tpl->add_js('
+		$strCountry = $this->config('default_country');
+		$strTown = $this->config('default_town');
+		
+		//Overwrite the Defaults with Userdata
+		$strUserCountry = $strUserTown = "";
+		if ($this->user->is_signedin()){
+			$strUserCountry = $this->pdh->get('user', 'country', array($this->user->id));
+			if ($strUserCountry != "") $strCountry = $strUserCountry;
+			
+			$strUserTown = $this->pdh->get('user', 'profilefield_by_name', array($this->user->id, 'location', true));
+			if ($strUserTown != "") $strTown = $strUserTown;
+		}
+		
+		//User has both in his profile
+		if($strUserCountry != "" && $strUserTown != ""){
+			$this->tpl->add_js('$("#weather_'.$this->id.'").simpleopenweather({template: \'<div style="display: block;" class="toggle_container"><div class="weatherCity"><i class="fa fa-map-marker fa-fw"></i> {{place}}</div><div class="weatherMiddle">{{icon}}<span class="weatherTemp">{{temperature}} '.$temperature_unit.'</span></div><div class="weatherDesc"><i class="fa fa-tag fa-fw"></i> {{sky}}</div><div class="weatherHumidity"><i class="fa fa-tint fa-fw"></i> {{humidity}} %</div><div class="weatherWind"><i class="fa fa-cloud"></i> {{wind.speed}} m/s, {{wind.direction}} °</div>\', lang:"'.$this->user->lang('XML_LANG').'", units: "'.$tempformat.'", iconfont: true});', "docready");
+			return '<div id="weather_'.$this->id.'" class="simpleopenweather" data-simpleopenweather-city="'.$strUserTown.', '.$strUserCountry.'"></div>';
+		
+		} elseif($this->config('geolocation') == '1'){
+			//User has nothing in profile, let's try geolocation
+			$js = '
 				if (navigator.geolocation) {
 					navigator.geolocation.getCurrentPosition(locationSuccess, locationError);
 				}else{
@@ -95,18 +125,35 @@ class weather_portal extends portal_generic {
 				}
 		
 				function locationSuccess(position) {
-					$("#weather").simpleopenweather({latitude: position.coords.latitude, longitude: position.coords.longitude, template: \'<div style="display: block;" class="toggle_container"><div class="weatherCity"><i class="fa fa-map-marker fa-fw"></i> {{place}}</div><div class="weatherMiddle">{{icon}}<span class="weatherTemp">{{temperature}} '.$temperature_unit.'</span></div><div class="weatherDesc"><i class="fa fa-tag fa-fw"></i> {{sky}}</div><div class="weatherHumidity"><i class="fa fa-tint fa-fw"></i> {{humidity}} %</div><div class="weatherWind"><i class="fa fa-cloud"></i> {{wind.speed}} m/s, {{wind.direction}} °</div>\', lang:"'.$this->user->lang('XML_LANG').'", units: "'.$tempformat.'", iconfont: true});
+					$("#weather_'.$this->id.'").simpleopenweather({latitude: position.coords.latitude, longitude: position.coords.longitude, template: \'<div style="display: block;" class="toggle_container"><div class="weatherCity"><i class="fa fa-map-marker fa-fw"></i> {{place}}</div><div class="weatherMiddle">{{icon}}<span class="weatherTemp">{{temperature}} '.$temperature_unit.'</span></div><div class="weatherDesc"><i class="fa fa-tag fa-fw"></i> {{sky}}</div><div class="weatherHumidity"><i class="fa fa-tint fa-fw"></i> {{humidity}} %</div><div class="weatherWind"><i class="fa fa-cloud"></i> {{wind.speed}} m/s, {{wind.direction}} °</div>\', lang:"'.$this->user->lang('XML_LANG').'", units: "'.$tempformat.'", iconfont: true});
+				}		
+				function showError(msg){
+					$("#error").html(msg);
+				}';
+			if ($strTown != "" && $strCountry != ""){
+				$js .= '
+				function locationError(error){
+					$("#weather_'.$this->id.'").attr("data-simpleopenweather-city", "'.$strTown.', '.$strCountry.'");	
+					$("#weather_'.$this->id.'").simpleopenweather({template: \'<div style="display: block;" class="toggle_container"><div class="weatherCity"><i class="fa fa-map-marker fa-fw"></i> {{place}}</div><div class="weatherMiddle">{{icon}}<span class="weatherTemp">{{temperature}} '.$temperature_unit.'</span></div><div class="weatherDesc"><i class="fa fa-tag fa-fw"></i> {{sky}}</div><div class="weatherHumidity"><i class="fa fa-tint fa-fw"></i> {{humidity}} %</div><div class="weatherWind"><i class="fa fa-cloud"></i> {{wind.speed}} m/s, {{wind.direction}} °</div>\', lang:"'.$this->user->lang('XML_LANG').'", units: "'.$tempformat.'", iconfont: true});
 				}
-
+				';
+			} else {
+				$js .= '
 				function locationError(error){
 					showError(error);
 				}
-		
-				function showError(msg){
-					$("#error").html(msg);
-				}', "docready");
-			return '<div id="weather" class="simpleopenweather"></div>';
-		}else{
+				';
+			}	
+			
+			$this->tpl->add_js($js, "docready");
+			
+			return '<div id="weather_'.$this->id.'" class="simpleopenweather"></div>';
+		}elseif($strCountry != "" && $strTown != ""){
+			//Show the default weather
+			$this->tpl->add_js('$("#weather_'.$this->id.'").simpleopenweather({template: \'<div style="display: block;" class="toggle_container"><div class="weatherCity"><i class="fa fa-map-marker fa-fw"></i> {{place}}</div><div class="weatherMiddle">{{icon}}<span class="weatherTemp">{{temperature}} '.$temperature_unit.'</span></div><div class="weatherDesc"><i class="fa fa-tag fa-fw"></i> {{sky}}</div><div class="weatherHumidity"><i class="fa fa-tint fa-fw"></i> {{humidity}} %</div><div class="weatherWind"><i class="fa fa-cloud"></i> {{wind.speed}} m/s, {{wind.direction}} °</div>\', lang:"'.$this->user->lang('XML_LANG').'", units: "'.$tempformat.'", iconfont: true});', "docready");
+			return '<div id="weather_'.$this->id.'" class="simpleopenweather" data-simpleopenweather-city="'.$strTown.', '.$strCountry.'"></div>';
+			
+		}else {
 			return $this->user->lang('weather_no_data');
 		}
 		
