@@ -1,6 +1,6 @@
 <?php
 /*	Project:	EQdkp-Plus
- *	Package:	Weather Portal Module
+ *	Package:	EQdkp-Plus Language File
  *	Link:		http://eqdkp-plus.eu
  *
  *	Copyright (C) 2006-2015 EQdkp-Plus Developer Team
@@ -19,18 +19,26 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-if ( !defined('EQDKP_INC') ){
-	header('HTTP/1.0 404 Not Found');exit;
+ 
+if (!defined('EQDKP_INC')) {
+	die('You cannot access this file directly.');
 }
 
-$lang = array(
-	'weather'				=> 'Weather',
-	'weather_desc'			=> 'Shows the weather',
-	'weather_name'			=> 'Weather',
-	'weather_no_data'		=> 'No Country or ZIP set in your user profile. Weather will only show information if you\'ve set up your Profile information.',
-	'weather_f_tempformat'	=> 'Temperature Format (default: Celcius)',
-	'weather_f_geolocation'	=> 'Use Geolocation-Option of the browser if no location data is setin the user profile?',
-	'weather_f_default_country' => 'Default Country',
-	'weather_f_default_town' => 'Default Town',
+//Language: English	
+//Created by EQdkp Plus Translation Tool on  2014-12-17 21:28
+//File: portal/weather/language/english.php
+//Source-Language: german
+
+$lang = array( 
+	"weather" => 'Weather',
+	"weather_desc" => 'Shows the weather',
+	"weather_name" => 'Weather',
+	"weather_no_data" => 'No Country or ZIP set in your user profile. Weather will only show information if you\'ve set up your Profile information.',
+	"weather_f_tempformat" => 'Temperature Format (default: Celcius)',
+	"weather_f_geolocation" => 'Use Geolocation-Option of the browser if no location data is setin the user profile?',
+	"weather_f_default_country" => 'Default Country',
+	"weather_f_default_town" => 'Default Town',
+	
 );
+
 ?>
