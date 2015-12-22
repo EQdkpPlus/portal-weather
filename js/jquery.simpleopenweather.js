@@ -1,7 +1,7 @@
 (function( $ ){
 	$.fn.simpleopenweather = function(options){
 		var defaults = {
-			template	: '<div class="simpleopenweather-place"> {{icon}} {{place}}: {{sky}} </div><div><span class="simpleopenweather-temperature">Temp: {{temperature.current}} ºC</span><span class="simpleopenweather-humidity"> Humidity: {{humidity}}%</span></div><div>Temp min/max: <span class="simpleopenweather-temperature-min">{{temperature.min}} ºC </span> /<span class="simpleopenweather-temperature-max">{{temperature.max}} ºC </span></div><div>Wind: <span class="simpleopenweather-wind-speed">{{wind.speed}} m/s</span> <span class="simpleopenweather-wind-direction">{{wind.direction}}º</span></div><div><span class="simpleopenweather-cloudiness">Cloudiness: {{cloudiness}}% </span> <span class="simpleopenweather-pressure">Pressure: {{pressure}} kPa</span></div>',
+			template	: '<div class="simpleopenweather-place"> {{icon}} {{place}}: {{sky}} </div><div><span class="simpleopenweather-temperature">Temp: {{temperature.current}} ºC</span><span class="simpleopenweather-humidity"> Humidity: {{humidity}}%</span></div><div>Temp min/max: <span class="simpleopenweather-temperature-min">{{temperature.min}} ºC </span> /<span class="simpleopenweather-temperature-max">{{temperature.max}} ºC </span></div><div>Wind: <span class="simpleopenweather-wind-speed">{{wind.speed}} m/s</span> <span class="simpleopenweather-wind-direction">{{wind.direction}}º</span></div><div><span class="simpleopenweather-cloudiness">Cloudiness: {{cloudiness}}% </span> <span class="simpleopenweather-pressure">Pressure: {{pressure}} hPa</span></div>',
 			noweather	: '<p>no weather report was found for that place!</p>',
 			error		: '<p>something went wrong!</p>',
 			latitude	: 0,
@@ -9,7 +9,8 @@
 			units		: 'imperial',
 			lang		: 'en',
 			iconset		: 'http://openweathermap.org/img/w/',
-			iconfont	: false
+			iconfont	: false,
+			appid		: '' 
 		}
 		var settings = $.extend(defaults, options);
 
@@ -36,6 +37,10 @@
 			} else{
 				openweathermap_url += "&units="+'imperial';
 			}
+			if(settings.appid != ''){
+				openweathermap_url += "&APPID="+settings.appid;
+			}
+
 			console.log(openweathermap_url);
 
 			$.ajax({
@@ -69,7 +74,6 @@
 						cloudiness 	: weather.clouds ? weather.clouds.all : "N/A",
 						sky 		: weather.weather[0].description,
 						icon 		: icon_name,
-						iconname	: weather.weather[0].icon,
 						place 		: weather.name
 					};
 
@@ -84,7 +88,6 @@
 											 	.replace(/{{wind.direction}}/ig, info.wind.direction)
 											 	.replace(/{{cloudiness}}/ig, info.cloudiness)
 												.replace(/{{icon}}/ig, ((settings.iconfont) ? '<i class="meteocon">'+info.icon+'</i>' : '<img src="'+info.icon+'"></img>'))
-												.replace(/{{iconname}}/ig, info.iconname)
 											 	.replace(/{{sky}}/ig, info.sky));
 				},
 				error : function(){
