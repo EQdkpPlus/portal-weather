@@ -99,7 +99,7 @@ class weather_portal extends portal_generic {
 		
 		$temperature_unit		= ($this->config('tempformat') == 'F') ? '°F' : '°C';
 		$tempformat				= ($this->config('tempformat') == 'F') ? 'imperial' : 'metric';
-		$appID					= '';
+		$appID					= '79dc639f59a1cfb21b70af3b9c6eb0ab';
 		
 		$strCountry = $this->config('default_country');
 		$strTown = $this->config('default_town');
