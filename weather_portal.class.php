@@ -29,7 +29,7 @@ class weather_portal extends portal_generic {
 	protected static $path		= 'weather';
 	protected static $data		= array(
 		'name'			=> 'Weather',
-		'version'		=> '4.1.0',
+		'version'		=> '4.2.0',
 		'author'		=> 'WalleniuM',
 		'icon'			=> 'fa-cloud',
 		'contact'		=> EQDKP_PROJECT_URL,
