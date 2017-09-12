@@ -8,7 +8,7 @@
 			longitude	: 0,
 			units		: 'imperial',
 			lang		: 'en',
-			iconset		: 'http://openweathermap.org/img/w/',
+			iconset		: 'https://openweathermap.org/img/w/',
 			iconfont	: false,
 			appid		: '' 
 		}
@@ -16,7 +16,7 @@
 
 		return this.each(function() {
 			var item = $(this);
-			var openweathermap_url = "http://api.openweathermap.org/data/2.5/weather";
+			var openweathermap_url = "https://api.openweathermap.org/data/2.5/weather";
 			var icons = {"01d": "B", "01n": "C", "02d": "H", "02n": "I", "03d": "N", "03n": "N", "04d": "Y", "04n": "Y", "09d": "Q", "09n": "Q", "10d": "R", "10n": "R", "11d": "0", "11n": "0", "13d": "W", "13n": "W", "50d": "J", "50n": "K"};
 
 			if(item.attr("data-simpleopenweather-city")){
