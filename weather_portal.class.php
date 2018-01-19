@@ -122,17 +122,17 @@ class weather_portal extends portal_generic {
 		} elseif($this->config('geolocation') == '1'){
 			//User has nothing in profile, let's try geolocation
 			$js = '
-				if (navigator.geolocation) {
+				if (navigator.geolocation && location.protocol === "https:") {
 					navigator.geolocation.getCurrentPosition(locationSuccess, locationError);
 				}else{
-					showError("Your browser does not support Geolocation!");
+					showError("Your browser does not support Geolocation or you are not using a secure protocol.");
 				}
 
 				function locationSuccess(position) {
 					$("#weather_'.$this->id.'").simpleopenweather({latitude: position.coords.latitude, longitude: position.coords.longitude, template: \'<div style="display: block;" class="toggle_container"><div class="weatherCity"><i class="fa fa-map-marker fa-fw"></i> {{place}}</div><div class="weatherMiddle">{{icon}}<span class="weatherTemp">{{temperature}} '.$temperature_unit.'</span></div><div class="weatherDesc"><i class="fa fa-tag fa-fw"></i> {{sky}}</div><div class="weatherHumidity"><i class="fa fa-tint fa-fw"></i> {{humidity}} %</div><div class="weatherWind"><i class="fa fa-cloud"></i> {{wind.speed}} m/s, {{wind.direction}} °</div>\', lang:"'.$this->user->lang('XML_LANG').'", units: "'.$tempformat.'", iconfont: true, appid:"'.$appID.'"});
 				}
 				function showError(msg){
-					$("#error").html(msg);
+					$("#weather_'.$this->id.'").html(msg);
 				}';
 			if ($strTown != "" && $strCountry != ""){
 				$js .= '
